@@ -5,7 +5,7 @@
 #include <SD.h> 
 
 int DIM_BUFFER = 200;
-int SMPL_TIME = 10;
+int SMPL_TIME = 9;
 
 int ID_number;
 String filename;
@@ -37,7 +37,7 @@ void setup() {
     while (1);
   }
   Serial.println("initialization done.");
-  //Serial.println("TIME,AccX,AccY,AccZ,GyroX,GyroY,GyroZ,AngleX,AngleY,AngleZ");
+  logFile.print("TIME,AccX,AccY,AccZ,GyroX,GyroY,GyroZ,AngleX,AngleY,AngleZ");
   Serial.println("start logging.");
 
   File root = SD.open("/");
