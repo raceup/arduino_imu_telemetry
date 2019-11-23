@@ -1,5 +1,5 @@
 # arduino_imu_telemetry
-Arduino and Matlab scripts for telemetry.
+This repository contains all Arduino and Matlab scripts for telemetry usage. There are several code snippets used to gather and manage the data.
 
 ## logger.ino
 Basic Arduino script to gather data from IMU and store them in a SD card.
