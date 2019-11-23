@@ -1,10 +1,11 @@
-
+  
 #include <MPU6050_tockn.h>
 #include <Wire.h>
 #include <SPI.h>
 #include <SD.h> 
 
-int DIM_BUFFER = 200;
+#define DIM_BUFFER 100
+
 int SMPL_TIME = 9;
 
 int ID_number;
@@ -19,17 +20,26 @@ typedef struct
   float data[9];
 } record;
 
-record Buffer[200];
+record Buffer[DIM_BUFFER];
   
 void setup() {
-  
-  randomSeed(analogRead(A0));
+    
   Serial.begin(9600);
   Wire.begin();
   mpu6050.begin();
-  mpu6050.calcGyroOffsets(true);
+  
+  //Set the register bits as 00001000 (+/- 4g full scale range)
+  Wire.beginTransmission(0x68);           
+  Wire.write(0x1C);                       
+  Wire.write(0x08);                       
+  Wire.endTransmission(true);
 
-  Serial.println();
+  //Set the register bits as 00001000 (+/- 4g full scale range)
+  Wire.beginTransmission(0x68);           
+  Wire.write(0x1A);                       
+  Wire.write(0x02);                       
+  Wire.endTransmission(true);
+
   Serial.print("Checking SD card...");
 
   if (!SD.begin(53)) {
@@ -37,12 +47,12 @@ void setup() {
     while (1);
   }
   Serial.println("initialization done.");
-  logFile.print("TIME,AccX,AccY,AccZ,GyroX,GyroY,GyroZ,AngleX,AngleY,AngleZ");
-  Serial.println("start logging.");
+  
+  mpu6050.calcGyroOffsets(true);
 
   File root = SD.open("/");
   File dir;
-  ID_number=1;
+  ID_number=0;
   
   while(root.openNextFile())
   {
@@ -50,7 +60,16 @@ void setup() {
   }
 
   //randNumber = random(99999);
-  filename = "log"+String(ID_number)+".txt";
+  filename = "log"+String(ID_number)+".csv";
+
+  Serial.println();
+  Serial.print("start logging on ");
+  Serial.println(filename);
+
+  Serial.println();
+
+  //Serial.println("TIME,AccX,AccY,AccZ,GyroX,GyroY,GyroZ,AngleX,AngleY,AngleZ");
+
 }
 
 /*
@@ -64,9 +83,9 @@ void loop() {
   mpu6050.update();
   //Serial.println("logging sample");
   Buffer[i].t=millis();
-  Buffer[i].data[0]=mpu6050.getAccX();
-  Buffer[i].data[1]=mpu6050.getAccY();
-  Buffer[i].data[2]=mpu6050.getAccZ();
+  Buffer[i].data[0]=mpu6050.getAccX()*2;
+  Buffer[i].data[1]=mpu6050.getAccY()*2;
+  Buffer[i].data[2]=mpu6050.getAccZ()*2;
   Buffer[i].data[3]=mpu6050.getGyroX();
   Buffer[i].data[4]=mpu6050.getGyroY();
   Buffer[i].data[5]=mpu6050.getGyroZ();
@@ -78,6 +97,16 @@ void loop() {
   if (i==DIM_BUFFER){
     logFile = SD.open(filename, FILE_WRITE);
     Serial.println("writing");
+    
+    //debug print
+    /*Serial.print(Buffer[i-1].t);
+    for (int j = 0; j <= 8; j++) {
+          Serial.print(",");
+          Serial.print(Buffer[i-1].data[j]);
+        }
+    Serial.println();
+    */
+    
     if(logFile){
       for (i=0; i<DIM_BUFFER; i++){
         //Serial.print(Buffer[i].t);
