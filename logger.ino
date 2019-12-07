@@ -4,9 +4,9 @@
 #include <SPI.h>
 #include <SD.h> 
 
-#define DIM_BUFFER 100
+#define DIM_BUFFER 1
 
-int SMPL_TIME = 9;
+int SMPL_TIME = 0;
 
 int ID_number;
 String filename;
