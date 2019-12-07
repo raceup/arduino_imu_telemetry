@@ -28,16 +28,16 @@ void setup() {
   Wire.begin();
   mpu6050.begin();
   
-  //Set the register bits as 00001000 (+/- 4g full scale range)
+  //Set the accelerometer full scale range as +/- 4g
   Wire.beginTransmission(0x68);           
   Wire.write(0x1C);                       
   Wire.write(0x08);                       
   Wire.endTransmission(true);
 
-  //Set the register bits as 00001000 (+/- 4g full scale range)
+  //Set the filter to accelerometer and gyroscope
   Wire.beginTransmission(0x68);           
   Wire.write(0x1A);                       
-  Wire.write(0x02);                       
+  Wire.write(0x06);                       
   Wire.endTransmission(true);
 
   Serial.print("Checking SD card...");
