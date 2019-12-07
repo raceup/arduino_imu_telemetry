@@ -10,6 +10,7 @@ def getTimes(fileName):
     for line in open(fileName,"r"):
         values=line.split(",")
         values[0]=int(values[0])
+        #if the sample rate is bigger than 50ms, i'm sure this is a write time
         if (values[0]-temp>50):
             time.append(values[0]-temp)
         temp=values[0]
