@@ -11,4 +11,4 @@ Basic matlab script to plot and visualize the logged data.
 Matlab script to plot and filter the signals.
 
 ## optimization folder
-Contains a python script that learns, from the caracteristics of the input files, the best dimension for a read/write buffer.
+Contains a python script that learns, from the caracteristics of the input files, the best dimension for a read/write buffer. There are also the input datasets.
