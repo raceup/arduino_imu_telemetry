@@ -10,7 +10,7 @@ Basic matlab script to plot and visualize the logged data.
 ## read_filter_acc.m
 Matlab script to plot and filter the signals.
 
-## Telemetria_IMU_Arduino
+## telemetria_IMU_arduino
 A PDF guide to italian users.
 
 ## optimization folder
