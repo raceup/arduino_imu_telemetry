@@ -1,3 +1,13 @@
+[file,path] = uigetfile('*.CSV','Select One or More Files', ...
+    'MultiSelect', 'on');
+
+if isequal(file,0)
+   disp('User selected Cancel');
+else
+   disp('User selected: ');
+   disp([fullfile(path,file)]);
+end
+
 %%PLOT E ANALISI DATI IMU
 %Race UP Team - 2019
 
@@ -15,7 +25,7 @@
 
 
 %apertura file di log
-fid = fopen('LOG2.TXT');
+fid = fopen(file);
 data = textscan(fid, '%f,%f,%f,%f,%f,%f,%f,%f,%f,%f');
 fclose(fid);
 
