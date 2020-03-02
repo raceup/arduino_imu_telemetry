@@ -4,6 +4,9 @@ This repository contains all Arduino and Matlab scripts for telemetry usage. The
 ## logger.ino
 Basic Arduino script to gather data from IMU sensor MPU-6050 and store them in a SD card.
 
+## plot_filter_acc_gyro.m
+Matlab script that auto-detects the useful logs of a testday, filters the data and plots the graphs.
+
 ## view_log.m
 Basic matlab script to plot and visualize the logged data.
 
