@@ -1,3 +1,5 @@
+close all
+
 %%PLOT E ANALISI DATI IMU
 %Race UP Team - 2019
 
@@ -24,6 +26,9 @@ else
    disp([fullfile(path,file)]);
 end
 
+mkdir relevant_log
+%fName = 'relevant_log\README.txt';
+
 %% Apertura file di LOG
 
 %se viene aperto un solo documento
@@ -31,7 +36,7 @@ if (class(file)=='char')
     fid = fopen(file);
     data = textscan(fid, '%f,%f,%f,%f,%f,%f,%f,%f,%f,%f');
     fclose(fid);
-    
+        
     %creazione array dati (con correzione assi dispositivo)
     t = data{1};
     accX = data{2};
@@ -46,8 +51,23 @@ if (class(file)=='char')
     
     [r, c] = size(t);
     
-    if ((r>13000) && (abs(max(accX))>0.3) && (abs(max(accY))>0.3))
-             
+    % condizione che rende importante un log di test
+    % che abbia sufficienti campioni interessanti (almeno 0.1 secondi)
+    counter=0;
+    for (i = 1:length(accX))
+        if (abs(accX(i))>0.3)
+            counter=counter+1;
+        end
+    end
+    
+    if ((r>13000) && (counter>100))
+        
+        %rm = fopen(fName,'w');
+        %fprintf(rm,'The file %s is relevant!',file);
+
+        %aggiungo il file alla cartella dei dati importanti
+        copyfile(file,'relevant_log')
+
         %PREPROCESSING
         filt=designfilt('lowpassiir', 'PassbandFrequency', .10, 'StopbandFrequency', .15, 'PassbandRipple', 1, 'StopbandAttenuation', 60);
 
@@ -70,47 +90,66 @@ if (class(file)=='char')
         c_gyroY= filtfilt(binomialCoeff, 1, gyroY);
         c_gyroZ= filtfilt(binomialCoeff, 1, gyroZ);
         
-        figure('Name',file);
-        grid on
-        grid minor
+        %title of the graph
+        dir='relevant_log\';
+        s1 = file;
+        s2 = '-ACC.fig';
+        s3 = '-GYRO.fig';
+        filename_acc = strcat(dir,s1,s2);
+        filename_gyro = strcat(dir,s1,s3);
+        
+        fa = figure('Name',filename_acc);
+        grid on;
+        grid minor;
+        hold on;
         subplot(3,1,1)
         plot(t,[accX,c_accX])
         grid on;
+        hold on;
         grid minor;
         title('accX [g]')
 
         subplot(3,1,2)
         plot(t,[accY,c_accY])
         grid on;
+        hold on;
         grid minor;
         title('accY [g]')
 
         subplot(3,1,3)
         plot(t,[accZ,c_accZ])
         grid on;
+        hold on;
         grid minor;
         title('accZ [g]')
         
-        figure('Name',file);
+        % salva il grafico accelerazioni
+        saveas(fa,filename_acc)
+            
+        fg = figure('Name',filename_gyro);
         grid on
         grid minor
         subplot(3,1,1)
         plot(t,[gyroX,c_gyroX])
         grid on;
         grid minor;
-        title('gyroX [dps]')
+        title('roll [dps]')
 
         subplot(3,1,2)
         plot(t,[gyroY,c_gyroY])
         grid on;
         grid minor;
-        title('gyroY [dps]')
+        title('pitch [dps]')
 
         subplot(3,1,3)
         plot(t,[gyroZ,c_gyroZ])
         grid on;
         grid minor;
-        title('gyroZ [dps]')
+        title('yaw [dps]')
+        
+        % salva il grafico giroscopio
+        saveas(fg,filename_gyro)
+        %fclose(rm);
     end
 else
     
@@ -134,8 +173,23 @@ else
 
         [r, c] = size(t);
 
-        if ((r>13000) && (abs(max(accX))>0.3) && (abs(max(accY))>0.3))
+        % condizione che rende importante un log di test
+        % che abbia sufficienti campioni interessanti (almeno 0.1 secondi)
+        counter=0;
+        for (i = 1:length(accX))
+            if (abs(accX(i))>0.3)
+                counter=counter+1;
+            end
+        end
+        
+        if ((r>13000) && (counter>100))
             
+            %rm = fopen(fName,'w');
+            %fprintf(rm,'The file %s is relevant!',file{n_file});
+        
+            %aggiungo il file alla cartella dei dati importanti
+            copyfile(file{n_file},'relevant_log')
+        
             %PREPROCESSING
             filt=designfilt('lowpassiir', 'PassbandFrequency', .10, 'StopbandFrequency', .15, 'PassbandRipple', 1, 'StopbandAttenuation', 60);
 
@@ -158,8 +212,15 @@ else
             c_gyroY= filtfilt(binomialCoeff, 1, gyroY);
             c_gyroZ= filtfilt(binomialCoeff, 1, gyroZ);
             
+            %title of the graph
+            dir='relevant_log\';
+            s1 = file{n_file};
+            s2 = '-ACC.fig';
+            s3 = '-GYRO.fig';
+            filename_acc = strcat(dir,s1,s2);
+            filename_gyro = strcat(dir,s1,s3);
             
-            figure('Name',file{n_file});
+            fa = figure('Name',filename_acc);
             grid on
             grid minor
             subplot(3,1,1)
@@ -180,26 +241,33 @@ else
             grid minor;
             title('accZ [g]')
             
-            figure('Name',file{n_file});
+            % salva il grafico accelerazioni
+            saveas(fa,filename_acc)
+            
+            fg=figure('Name',filename_gyro);
             grid on
             grid minor
             subplot(3,1,1)
             plot(t,[gyroX,c_gyroX])
             grid on;
             grid minor;
-            title('gyroX [dps]')
+            title('roll [dps]')
 
             subplot(3,1,2)
             plot(t,[gyroY,c_gyroY])
             grid on;
             grid minor;
-            title('gyroY [dps]')
+            title('pitch [dps]')
 
             subplot(3,1,3)
             plot(t,[gyroZ,c_gyroZ])
             grid on;
             grid minor;
-            title('gyroZ [dps]')
+            title('yaw [dps]')
+            
+            % salva il grafico giroscopio
+            saveas(fg,filename_gyro)
+            %fclose(rm);
         end
     end
 end
